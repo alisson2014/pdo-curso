@@ -8,7 +8,7 @@ require_once "vendor/autoload.php";
 
 $pdo = ConnectionCreator::createConnection();
 
-$student2 = new Student(null, "Joana", new \DateTimeImmutable("2001-02-08"));
+$student2 = new Student(null, "WERT", new \DateTimeImmutable("2001-02-08"));
 $repository = new PdoStudentRepository($pdo);
 $studentInsert = $repository->save($student2);
 var_dump($studentInsert);
