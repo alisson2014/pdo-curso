@@ -1,10 +1,7 @@
 <?php
 
-use Alura\Pdo\Infrastructure\Persistence\ConnectionCreator;
-
+include_once "config/index.php";
 require_once "vendor/autoload.php";
-
-$conn = ConnectionCreator::createConnection();
 
 echo "Conectei";
 

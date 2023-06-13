@@ -1,32 +1,28 @@
 <?php
 
 use Alura\Pdo\Domain\Model\Student;
-use Alura\Pdo\Infrastructure\Persistence\ConnectionCreator;
-use Alura\Pdo\Infrastructure\Repository\PdoStudentRepository;
 
-require_once 'vendor/autoload.php';
-
-$conn = ConnectionCreator::createConnection();
-$studentRepository = new PdoStudentRepository($conn);
+include_once "config/index.php";
+require_once "vendor/autoload.php";
 
 $conn->beginTransaction();
 
 try {
     $aStudent = new Student(
         null,
-        'Nico Steppat',
-        new \DateTimeimmutable('1985-05-01')
+        "Nico Steppat",
+        new \DateTimeimmutable("1985-05-01")
     );
 
-    $studentRepository->save($aStudent);
+    $repository->save($aStudent);
 
     $anotherStudent = new Student(
         null,
-        'Sergio Lopes',
-        new \DateTimeimmutable('1985-05-01')
+        "Sergio Lopes",
+        new \DateTimeimmutable("1985-05-01")
     );
 
-    $studentRepository->save($anotherStudent);
+    $repository->save($anotherStudent);
 
     $conn->commit();
 } catch (\PDOException $e) {

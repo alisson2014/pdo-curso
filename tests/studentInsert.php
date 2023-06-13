@@ -1,14 +1,10 @@
 <?php
 
-use Alura\Pdo\Infrastructure\Persistence\ConnectionCreator;
 use Alura\Pdo\Domain\Model\Student;
-use Alura\Pdo\Infrastructure\Repository\PdoStudentRepository;
 
+include_once "config/index.php";
 require_once "vendor/autoload.php";
 
-$pdo = ConnectionCreator::createConnection();
-
-$student2 = new Student(null, "WERT", new \DateTimeImmutable("2001-02-08"));
-$repository = new PdoStudentRepository($pdo);
+$student2 = new Student(null, "Jonas", new \DateTimeImmutable("2001-05-12"));
 $studentInsert = $repository->save($student2);
 var_dump($studentInsert);

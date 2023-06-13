@@ -1,11 +1,7 @@
 <?php
 
-use Alura\Pdo\Infrastructure\Persistence\ConnectionCreator;
-use Alura\Pdo\Infrastructure\Repository\PdoStudentRepository;
+include_once "config/index.php";
+require_once "vendor/autoload.php";
 
-require_once 'vendor/autoload.php';
-
-$pdo = ConnectionCreator::createConnection();
-$repository = new PdoStudentRepository($pdo);
 $studentDelete = $repository->delete(2);
 var_dump($studentDelete);
