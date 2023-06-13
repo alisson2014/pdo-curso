@@ -10,29 +10,42 @@ use PDO;
 class PdoStudentRepository implements StudentRepository
 {
     /**
-     * @var PDO $connection
+     * @var PDO $conn
      */
-    private PDO $connection;
+    private PDO $conn;
+
     public function __construct(PDO $pdo)
     {
-        $this->connection = $pdo;
+        $this->conn = $pdo;
     }
+
+    /** @return array */
     public function allStudents(): array
     {
         $sqlQuery = "SELECT * FROM students;";
-        $stmt = $this->connection->query($sqlQuery);
+        $stmt = $this->conn->query($sqlQuery);
 
         return $this->hydrateStudentList($stmt);
     }
+
+    /**
+     * @param \DateTimeInterface $birthDate
+     * @return array
+     */
     public function studentsBirthAt(\DateTimeInterface $birthDate): array
     {
         $sqlQuery = "SELECT * FROM students WHERE birth_date = ?;";
-        $stmt = $this->connection->prepare($sqlQuery);
+        $stmt = $this->conn->prepare($sqlQuery);
         $stmt->bindValue(1, $birthDate->format("Y-m-d"), PDO::PARAM_STR);
         $stmt->execute();
 
         return $this->hydrateStudentList($stmt);
     }
+
+    /**
+     * @param \PDOStatement $stmt
+     * @return array
+     */
     private function hydrateStudentList(\PDOStatement $stmt): array
     {
         $studentDataList = $stmt->fetchAll();
@@ -49,6 +62,10 @@ class PdoStudentRepository implements StudentRepository
         return $studentList;
     }
 
+    /**
+     * @param Student $student
+     * @return bool
+     */
     public function save(Student $student): bool
     {
         if ($student->id() === null) {
@@ -57,10 +74,15 @@ class PdoStudentRepository implements StudentRepository
 
         return $this->update($student);
     }
+
+    /**
+     * @param Student $student
+     * @return bool
+     */
     private function insert(Student $student): bool
     {
         $insertSql = "INSERT INTO students VALUES (NULL, ?, ?);";
-        $stmt = $this->connection->prepare($insertSql);
+        $stmt = $this->conn->prepare($insertSql);
 
         $bindValues = [
             $student->name(),
@@ -70,29 +92,40 @@ class PdoStudentRepository implements StudentRepository
         $success = $stmt->execute($bindValues);
 
         if ($success) {
-            $student->defineId($this->connection->lastInsertId());
+            $student->defineId($this->conn->lastInsertId());
         }
 
         return $success;
     }
+
+    /**
+     * @param Student $student
+     * @return bool
+     */
     private function update(Student $student): bool
     {
         $updateQuery = "UPDATE students SET name = :name, birth_date = :birth_date WHERE id = :id;";
-        $stmt = $this->connection->prepare($updateQuery);
+        $stmt = $this->conn->prepare($updateQuery);
         $stmt->bindValue(":name", $student->name(), PDO::PARAM_STR);
         $stmt->bindValue(":birth_date", $student->birthDate()->format('Y-m-d'), PDO::PARAM_STR);
         $stmt->bindValue(":id", $student->id(), PDO::PARAM_INT);
 
         return $stmt->execute();
     }
+
+    /**
+     * @param int $id
+     * @return bool
+     */
     public function delete(int $id): bool
     {
-        $stmt = $this->connection->prepare("DELETE FROM students WHERE id = ?;");
+        $stmt = $this->conn->prepare("DELETE FROM students WHERE id = ?;");
         $stmt->bindValue(1, $id, PDO::PARAM_INT);
 
         return $stmt->execute();
     }
 
+    /** @return array */
     public function studentsWithPhones(): array
     {
         $sqlQuery = "SELECT students.id,
@@ -103,7 +136,7 @@ class PdoStudentRepository implements StudentRepository
                             phones.number
                      FROM students
                      JOIN phones ON students.id = phones.student_id;";
-        $stmt = $this->connection->query($sqlQuery);
+        $stmt = $this->conn->query($sqlQuery);
         $result = $stmt->fetchAll();
         $studentList = [];
 

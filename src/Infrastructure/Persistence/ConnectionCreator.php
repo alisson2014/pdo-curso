@@ -6,7 +6,9 @@ use PDO;
 
 class ConnectionCreator
 {
-    const DATA_BASE_PATH = __DIR__ . "/../../../base.sqlite";
+    public const DATA_BASE_PATH = __DIR__ . "/../../../base.sqlite";
+
+    /** @return PDO */
     public static function createConnection(): PDO
     {
         $connection = new PDO("sqlite:" . self::DATA_BASE_PATH);
